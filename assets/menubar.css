@@ -1,0 +1,273 @@
+/* ── Scriptwriter Menu Bar ─────────────────────────────────── */
+
+#sw-menubar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  background: hsl(var(--background, 224 71% 4%));
+  border-bottom: 1px solid hsl(var(--border, 215 28% 17%));
+  position: relative;
+  z-index: 100;
+  flex-shrink: 0;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+/* Push the existing toolbar down by 28px */
+body {
+  overflow: hidden;
+}
+
+#sw-menubar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+}
+
+/* ── Menu triggers ─────────────────────────────────────────── */
+
+.sw-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(215 20% 65%);
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.sw-menu-trigger:hover,
+.sw-menu-trigger[aria-expanded="true"] {
+  background: hsl(215 28% 17%);
+  color: hsl(0 0% 92%);
+}
+
+/* ── Dropdown panels ───────────────────────────────────────── */
+
+.sw-dropdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 220px;
+  background: hsl(224 71% 6%);
+  border: 1px solid hsl(215 28% 20%);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  padding: 4px;
+  z-index: 9999;
+  display: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+.sw-dropdown.sw-open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  animation: swDropIn 120ms ease forwards;
+}
+
+@keyframes swDropIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Menu items ────────────────────────────────────────────── */
+
+.sw-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 5px 28px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  color: hsl(215 20% 70%);
+  cursor: pointer;
+  position: relative;
+  transition: background 80ms, color 80ms;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  outline: none;
+}
+
+.sw-menu-item:hover {
+  background: hsl(215 28% 17%);
+  color: hsl(0 0% 92%);
+}
+
+.sw-menu-item:active {
+  background: hsl(215 28% 22%);
+}
+
+.sw-menu-item.sw-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.sw-menu-item .sw-item-icon {
+  position: absolute;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+.sw-menu-item .sw-item-shortcut {
+  font-size: 11px;
+  color: hsl(215 20% 45%);
+  margin-left: 24px;
+  flex-shrink: 0;
+}
+
+.sw-menu-separator {
+  height: 1px;
+  background: hsl(215 28% 17%);
+  margin: 3px 6px;
+}
+
+.sw-menu-label {
+  padding: 4px 10px 2px 28px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(215 20% 40%);
+}
+
+/* Submenu arrow */
+.sw-menu-item.sw-has-sub::after {
+  content: '▶';
+  font-size: 9px;
+  color: hsl(215 20% 40%);
+  margin-left: 8px;
+}
+
+/* Check/radio state */
+.sw-menu-item.sw-checked .sw-item-icon::before {
+  content: '✓';
+  font-size: 12px;
+  color: hsl(43 96% 56%);
+}
+
+/* ── Backdrop ──────────────────────────────────────────────── */
+
+#sw-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+}
+
+#sw-menu-backdrop.sw-active {
+  display: block;
+}
+
+/* ── Scratch Pad Tab ───────────────────────────────────────── */
+
+#sw-scratchpad-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(215 20% 50%);
+  cursor: pointer;
+  padding: 0 4px;
+  height: 40px;
+  transition: color 120ms, border-color 120ms;
+  outline: none;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+#sw-scratchpad-tab-btn:hover {
+  color: hsl(0 0% 85%);
+}
+
+#sw-scratchpad-tab-btn.sw-tab-active {
+  border-bottom-color: hsl(43 96% 56%);
+  color: hsl(0 0% 90%);
+}
+
+/* ── Scratch Pad Panel ─────────────────────────────────────── */
+
+#sw-scratchpad-panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+#sw-scratchpad-panel.sw-visible {
+  display: flex;
+}
+
+#sw-scratchpad-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: hsl(215 20% 70%);
+  padding: 12px;
+  caret-color: hsl(43 96% 56%);
+}
+
+#sw-scratchpad-textarea::placeholder {
+  color: hsl(215 20% 35%);
+}
+
+#sw-scratchpad-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  border-top: 1px solid hsl(215 28% 17%);
+  font-size: 10px;
+  color: hsl(215 20% 35%);
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+#sw-scratchpad-clear {
+  background: transparent;
+  border: none;
+  color: hsl(215 20% 35%);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: color 100ms;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+#sw-scratchpad-clear:hover {
+  color: hsl(0 0% 70%);
+}
+
+/* Dark mode aware — the app toggles a class on :root */
+:root.dark #sw-menubar,
+.dark #sw-menubar {
+  background: hsl(224 71% 4%);
+  border-bottom-color: hsl(215 28% 15%);
+}
