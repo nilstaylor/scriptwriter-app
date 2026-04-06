@@ -42,6 +42,20 @@
     if (el) el.click();
   }
 
+  // ── Fullscreen toggle ────────────────────────────────────────────
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  function isFullscreen() {
+    return !!document.fullscreenElement;
+  }
+
   function focusEditor() {
     const editor = document.querySelector('[data-testid="screenplay-editor"], .screenplay-editor, [contenteditable="true"]');
     if (editor) editor.focus();
@@ -191,9 +205,16 @@
         },
         { type: 'separator' },
         {
+          label: 'Enter Full Screen',
+          shortcut: 'F11',
+          icon: '⛶',
+          id: 'sw-menu-fullscreen',
+          action: () => toggleFullscreen(),
+        },
+        {
           label: 'Distraction-Free Mode',
           shortcut: shortcut('Cmd+Shift+F'),
-          icon: '⛶',
+          icon: '▭',
           action: () => clickTestId('distraction-free-btn'),
         },
         { type: 'separator' },
@@ -537,6 +558,7 @@
         } else {
           const btn = document.createElement('button');
           btn.className = 'sw-menu-item';
+          if (item.id) btn.id = item.id;
           btn.setAttribute('role', 'menuitem');
           if (item.disabled) btn.classList.add('sw-disabled');
 
@@ -594,6 +616,7 @@
       ['Find & Replace', `${mod}+F`],
       ['Toggle Left Panel', `${mod}+[`],
       ['Toggle Right Panel', `${mod}+]`],
+      ['Full Screen', 'F11'],
       ['Distraction-Free', `${mod}+⇧+F`],
       ['Dark / Light Mode', `${mod}+⇧+D`],
       ['Scratch Pad', `${mod}+⇧+N`],
@@ -723,11 +746,88 @@
     }
   }
 
+  // ── Inject fullscreen button into toolbar ───────────────────────
+
+  function injectFullscreenButton() {
+    if (document.getElementById('sw-fullscreen-btn')) return true;
+    const toolbar = document.querySelector('[data-testid="top-toolbar"]');
+    if (!toolbar) return false;
+
+    // Find the right-side group (ml-auto div)
+    const rightGroup = toolbar.querySelector('.ml-auto');
+    if (!rightGroup) return false;
+
+    const btn = document.createElement('button');
+    btn.id = 'sw-fullscreen-btn';
+    btn.setAttribute('title', 'Full Screen (F11)');
+    btn.setAttribute('aria-label', 'Toggle full screen');
+    btn.style.cssText = [
+      'display:inline-flex', 'align-items:center', 'justify-content:center',
+      'width:32px', 'height:32px', 'border-radius:6px', 'border:none',
+      'background:transparent', 'cursor:pointer', 'color:hsl(215,20%,55%)',
+      'transition:color 120ms, background 120ms', 'flex-shrink:0',
+      'padding:0',
+    ].join(';');
+
+    btn.innerHTML = getFullscreenIcon(false);
+
+    btn.addEventListener('mouseenter', () => {
+      btn.style.background = 'hsl(215,28%,17%)';
+      btn.style.color = 'hsl(0,0%,90%)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.background = 'transparent';
+      btn.style.color = 'hsl(215,20%,55%)';
+    });
+    btn.addEventListener('click', () => toggleFullscreen());
+
+    // Insert before the first child of the right group
+    rightGroup.insertBefore(btn, rightGroup.firstChild);
+
+    // Update icon & menu label when fullscreen state changes
+    document.addEventListener('fullscreenchange', () => {
+      const fs = isFullscreen();
+      btn.innerHTML = getFullscreenIcon(fs);
+      btn.setAttribute('title', fs ? 'Exit Full Screen (F11)' : 'Full Screen (F11)');
+      // Update View menu label
+      const menuItem = document.getElementById('sw-menu-fullscreen');
+      if (menuItem) {
+        const lbl = menuItem.querySelector('.sw-item-label');
+        if (lbl) lbl.textContent = fs ? 'Exit Full Screen' : 'Enter Full Screen';
+      }
+    });
+
+    return true;
+  }
+
+  function getFullscreenIcon(active) {
+    if (active) {
+      // Exit fullscreen icon — inward arrows
+      return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/>
+        <path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+      </svg>`;
+    }
+    // Enter fullscreen icon — outward arrows
+    return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 7V3h4"/><path d="M21 7V3h-4"/>
+      <path d="M3 17v4h4"/><path d="M21 17v4h-4"/>
+    </svg>`;
+  }
+
   // Wait for React to hydrate
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(mount, 200));
   } else {
-    setTimeout(mount, 200);
+    setTimeout(() => {
+      mount();
+      // Retry injecting the toolbar button until the editor is rendered
+      let attempts = 0;
+      const retryBtn = setInterval(() => {
+        attempts++;
+        if (injectFullscreenButton() || attempts > 40) clearInterval(retryBtn);
+      }, 300);
+    }, 200);
   }
 
   // ── Global keyboard shortcuts ─────────────────────────────────────
@@ -746,6 +846,13 @@
         if (rightPanel && rightPanel.offsetWidth < 10) toggle?.click();
         setTimeout(() => noteTab.click(), 150);
       }
+    }
+
+    // F11 — fullscreen (works without meta key)
+    if (e.key === 'F11') {
+      e.preventDefault();
+      toggleFullscreen();
+      return;
     }
 
     // Toggle left panel: Cmd+[
