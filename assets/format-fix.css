@@ -220,3 +220,11 @@
     box-shadow: none !important;
   }
 }
+
+/* ── Hide landing page tutorial video ───────────────────────────────
+   Removed per user request. Hides the entire "How it works" section
+   (eyebrow, heading, subheading, and video player).
+   ---------------------------------------------------------------- */
+.home-video-section {
+  display: none !important;
+}
