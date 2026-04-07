@@ -1,0 +1,223 @@
+/*
+ * Scriptwriter — Industry Standard Formatting Corrections
+ * Based on WGA / Academy Nicholl / Final Draft / Sony specs.
+ * All measurements verified against 8.5" × 11" page at 96 DPI.
+ *
+ * Standard reference:
+ *   Page:           8.5" × 11" (816 × 1056px at 96dpi)
+ *   Left margin:    1.5"  = 144px
+ *   Right margin:   1.0"  = 96px
+ *   Top margin:     1.0"  = 96px
+ *   Bottom margin:  1.0"  = 96px
+ *   Action:         left 1.5" → right 7.5" (6" wide = 576px text width)
+ *   Scene heading:  same as action, ALL CAPS
+ *   Character cue:  3.7" from page left (2.2" from left margin)
+ *   Dialogue:       left 2.5", right 2.0" from page edges
+ *   Parenthetical:  left 3.1", right 2.5" from page edges
+ *   Transition:     flush right (~6.0" from left / right-aligned)
+ *   Page number:    flush right, 0.5" from top
+ *   Line height:    1.0 (single-spaced, Courier Prime 12pt)
+ *   ~55 lines per page
+ */
+
+/* ── Page canvas ────────────────────────────────────────────────────
+   Current:  padding: 72px 72px 72px 108px  (1.125" top/right/bottom, 1.125" left — wrong)
+   Fixed:    padding: 96px 96px 96px 144px  (1.0" top/right/bottom, 1.5" left)
+   ---------------------------------------------------------------- */
+.script-page {
+  padding: 96px 96px 96px 144px !important;
+  max-width: 816px !important;
+  min-height: 1056px !important;
+  /* Prevent accidental font changes */
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace !important;
+  font-size: 12pt !important;
+  line-height: 1 !important;
+}
+
+/* ── Scene Heading ──────────────────────────────────────────────────
+   Left margin: 0 (flush to left page margin = 1.5")
+   ALL CAPS, bold, 2 blank lines above, 1 blank line below.
+   24pt above = 2 × 12pt lines. 12pt below = 1 line. Correct. ✓
+   ---------------------------------------------------------------- */
+.element-scene-heading {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 24pt !important;
+  margin-bottom: 12pt !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── Action / Description ───────────────────────────────────────────
+   Left: 0 (flush to left margin = 1.5")
+   Right: 0 (flush to right margin = 1.0")
+   Blank line (12pt) between action blocks.
+   ---------------------------------------------------------------- */
+.element-action {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 12pt !important;
+}
+
+/* ── Character Cue ──────────────────────────────────────────────────
+   Standard: 3.7" from page left = 355px from page left
+             With 144px left padding: margin-left = 355 - 144 = 211px
+   Current:  margin-left: 210px from text area (≈ 318px from page = 3.31") ← wrong
+   Fixed:    margin-left: 211px from text area (= 355px from page = 3.70") ← correct
+   1 blank line above character cue (12pt margin-top). ✓
+   ---------------------------------------------------------------- */
+.element-character {
+  margin-left: 211px !important;
+  margin-right: 0 !important;
+  margin-top: 12pt !important;
+  margin-bottom: 0 !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* ── Parenthetical ──────────────────────────────────────────────────
+   Standard: left 3.1" from page = 298px from page left
+             With 144px left padding: margin-left = 298 - 144 = 154px
+             right 2.5" from page = margin-right = 2.5" - 1.0"(right padding) = 1.5" = 144px
+   Current:  margin: 0 150px  (left = 258px from page = 2.69" ← wrong)
+   Fixed:    margin-left: 154px; margin-right: 144px
+   ---------------------------------------------------------------- */
+.element-parenthetical {
+  margin-left: 154px !important;
+  margin-right: 144px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Dialogue ───────────────────────────────────────────────────────
+   Standard: left 2.5" from page = 240px from page left
+             With 144px left padding: margin-left = 240 - 144 = 96px
+             right 2.0" from page: margin-right = 2.0" - 1.0"(right padding) = 1.0" = 96px
+   Current:  margin: 0 120px (left = 228px from page = 2.375" ← wrong)
+   Fixed:    margin-left: 96px; margin-right: 96px; margin-bottom: 12pt
+   ---------------------------------------------------------------- */
+.element-dialogue {
+  margin-left: 96px !important;
+  margin-right: 96px !important;
+  margin-top: 0 !important;
+  margin-bottom: 12pt !important;
+}
+
+/* ── Transition ─────────────────────────────────────────────────────
+   Standard: flush right (right-aligned to right page margin).
+   text-align: right on the existing text-area width is correct only if
+   the element spans the full text width. Ensure no extra left indent.
+   Also: 1 blank line above and below (12pt margins). ✓
+   ---------------------------------------------------------------- */
+.element-transition {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 12pt !important;
+  margin-bottom: 12pt !important;
+  text-align: right !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── Shot / General / Centered ──────────────────────────────────────
+   Shot: same as scene heading margins (flush left in text area).
+   Centered: centered within text area (margin auto).
+   ---------------------------------------------------------------- */
+.element-shot {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 12pt !important;
+  margin-bottom: 12pt !important;
+  text-transform: uppercase !important;
+}
+
+.element-centered {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: center !important;
+  margin-top: 12pt !important;
+  margin-bottom: 12pt !important;
+}
+
+/* ── Lyrics / Song lines ────────────────────────────────────────────
+   Indented like dialogue but italic. Keep relative to new dialogue margin.
+   ---------------------------------------------------------------- */
+.element-lyrics {
+  margin-left: 96px !important;
+  margin-right: 96px !important;
+  margin-top: 6pt !important;
+  margin-bottom: 6pt !important;
+  font-style: italic !important;
+}
+
+/* ── Page Number ────────────────────────────────────────────────────
+   Standard: flush right, 0.5" (48px) from top of page.
+   With new 96px top padding, position: absolute top at 48px.
+   Right-aligned at the right margin (96px from page edge).
+   ---------------------------------------------------------------- */
+.page-number {
+  top: 48px !important;
+  right: 96px !important;
+  font-family: 'Courier Prime', monospace !important;
+  font-size: 12pt !important;
+}
+
+/* ── Responsive override suppression ───────────────────────────────
+   The bundle has a small-screen override that resets margins to
+   percentages. Keep standard measurements active down to tablet.
+   Below 700px (mobile) we allow the responsive override.
+   ---------------------------------------------------------------- */
+@media (min-width: 700px) {
+  .element-character {
+    margin-left: 211px !important;
+  }
+  .element-parenthetical {
+    margin-left: 154px !important;
+    margin-right: 144px !important;
+  }
+  .element-dialogue {
+    margin-left: 96px !important;
+    margin-right: 96px !important;
+  }
+}
+
+/* ── Ghost / autocomplete text alignment ───────────────────────────
+   The ghost text for character autocomplete is absolutely positioned
+   relative to the character element. Adjust left offset to match
+   the new character margin.
+   ---------------------------------------------------------------- */
+[data-testid="character-ghost"],
+[aria-hidden="true"][style*="calc(108px"] {
+  /* The JS hardcodes calc(108px + Nch) — we can't override this via CSS alone.
+     The ghost is positioned absolutely inside the character element, so its
+     own left:0 is correct relative to the character container. */
+}
+
+/* ── Dual dialogue ──────────────────────────────────────────────────
+   Dual dialogue columns: each column gets roughly half the dialogue
+   width. The outer row spans the full text area.
+   ---------------------------------------------------------------- */
+.dual-dialogue-row {
+  margin-bottom: 12pt !important;
+}
+
+.element-dual-dialogue-left,
+.element-dual-dialogue-right {
+  margin: 0 !important;
+  padding: 4px 8px !important;
+}
+
+/* ── Export / print page layout ─────────────────────────────────────
+   Ensure PDF export (html2canvas) respects the same margins.
+   ---------------------------------------------------------------- */
+@media print {
+  .script-page {
+    padding: 96px 96px 96px 144px !important;
+    max-width: 816px !important;
+    box-shadow: none !important;
+  }
+}
