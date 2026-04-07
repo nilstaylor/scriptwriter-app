@@ -9,9 +9,16 @@
   const STORAGE_KEY_PREFIX = 'sw_scratchpad_';
 
   function getScreenplayId() {
-    // Try to read from the URL hash or a data attribute
-    const hash = location.hash.replace('#', '') || location.pathname.split('/').filter(Boolean).pop();
-    return hash || 'default';
+    // Try to get the screenplay title from the DOM (app renders it in the toolbar)
+    const titleEl = document.querySelector('[data-testid="script-title"], .script-title, [data-screenplay-title]');
+    if (titleEl) {
+      const title = (titleEl.textContent || titleEl.value || '').trim();
+      if (title && title !== 'Untitled Screenplay' && title.length > 0) {
+        return 'title_' + title.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 40);
+      }
+    }
+    // Fall back to a single shared key (acceptable since most sessions = one screenplay)
+    return 'default';
   }
 
   function loadNotes() {
@@ -112,12 +119,14 @@
         t.style.color = '';
       });
 
-      // Hide all existing tab panels
+      // Hide all existing tab panels (track which ones we hide)
+      hiddenByUs.clear();
       const allPanels = tabPanelsContainer.querySelectorAll('[role="tabpanel"], [data-state]');
       allPanels.forEach(p => {
         if (p.id !== 'sw-scratchpad-panel') {
           p.setAttribute('data-state', 'inactive');
           p.style.display = 'none';
+          hiddenByUs.add(p);
         }
       });
 
@@ -130,19 +139,19 @@
     });
 
     // ── When other tabs are clicked, hide the scratchpad ────────
+    // Track exactly which panels WE hid so we only un-hide those
+    const hiddenByUs = new Set();
     const observer = new MutationObserver(() => {
       const activePanels = tabPanelsContainer.querySelectorAll('[data-state="active"]:not(#sw-scratchpad-panel)');
-      if (activePanels.length > 0) {
+      if (activePanels.length > 0 && panel.classList.contains('sw-visible')) {
         // Another tab became active — deactivate ours
         tabBtn.setAttribute('aria-selected', 'false');
         tabBtn.classList.remove('sw-tab-active');
         panel.classList.remove('sw-visible');
 
-        // Re-show any hidden panels
-        const allPanels = tabPanelsContainer.querySelectorAll('[data-state="inactive"]');
-        allPanels.forEach(p => {
-          if (p.id !== 'sw-scratchpad-panel') p.style.display = '';
-        });
+        // Only re-show panels we explicitly hid
+        hiddenByUs.forEach(p => { p.style.display = ''; });
+        hiddenByUs.clear();
       }
     });
 
