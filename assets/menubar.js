@@ -97,8 +97,9 @@
           icon: '⬆️',
           action: () => {
             // Click the Export FDX button in toolbar (look for text content)
-            const btns = [...document.querySelectorAll('button')];
-            const fdx = btns.find(b => b.textContent.includes('Export FDX') || b.title?.includes('FDX'));
+            const toolbar = document.querySelector('[data-testid="top-toolbar"]') || document.body;
+            const btns = [...toolbar.querySelectorAll('button')];
+            const fdx = btns.find(b => b.textContent.trim().includes('Export') && (b.textContent.includes('FDX') || b.title?.includes('FDX')));
             if (fdx) fdx.click();
             else triggerKey('e', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
           },
@@ -108,8 +109,9 @@
           shortcut: shortcut('Cmd+Shift+P'),
           icon: '🖨️',
           action: () => {
-            const btns = [...document.querySelectorAll('button')];
-            const pdf = btns.find(b => b.textContent.includes('PDF') || b.title?.includes('PDF'));
+            const toolbar2 = document.querySelector('[data-testid="top-toolbar"]') || document.body;
+            const btns2 = [...toolbar2.querySelectorAll('button')];
+            const pdf = btns2.find(b => (b.textContent.trim().includes('Export') || b.textContent.trim() === 'PDF') && (b.textContent.includes('PDF') || b.title?.includes('PDF')));
             if (pdf) pdf.click();
             else triggerKey('p', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
           },
@@ -816,21 +818,30 @@
   }
 
   // Wait for React to hydrate
+  function mountAndRetryFullscreen() {
+    mount();
+    let attempts = 0;
+    const retryBtn = setInterval(() => {
+      attempts++;
+      if (injectFullscreenButton() || attempts > 40) clearInterval(retryBtn);
+    }, 300);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setTimeout(mount, 200));
+    document.addEventListener('DOMContentLoaded', () => setTimeout(mountAndRetryFullscreen, 200));
   } else {
-    setTimeout(() => {
-      mount();
-      // Retry injecting the toolbar button until the editor is rendered
-      let attempts = 0;
-      const retryBtn = setInterval(() => {
-        attempts++;
-        if (injectFullscreenButton() || attempts > 40) clearInterval(retryBtn);
-      }, 300);
-    }, 200);
+    setTimeout(mountAndRetryFullscreen, 200);
   }
 
   // ── Global keyboard shortcuts ─────────────────────────────────────
+
+  // F11 — fullscreen (no modifier needed, must be separate listener)
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F11') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  }, true);
 
   document.addEventListener('keydown', e => {
     const metaOrCtrl = isMac ? e.metaKey : e.ctrlKey;
@@ -848,11 +859,11 @@
       }
     }
 
-    // F11 — fullscreen (works without meta key)
-    if (e.key === 'F11') {
+    // Spelling & Grammar: Cmd/Ctrl+;
+    if (e.key === ';') {
       e.preventDefault();
-      toggleFullscreen();
-      return;
+      const spellingBtn = document.querySelector('#sw-dropdown-edit [data-spell-toggle]');
+      if (spellingBtn) spellingBtn.click();
     }
 
     // Toggle left panel: Cmd+[
