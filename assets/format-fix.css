@@ -186,15 +186,14 @@
 }
 
 /* ── Ghost / autocomplete text alignment ───────────────────────────
-   The ghost text for character autocomplete is absolutely positioned
-   relative to the character element. Adjust left offset to match
-   the new character margin.
+   The app bundle hardcodes left: calc(108px + Nch) for the ghost
+   text overlay. Since the left page margin was corrected from
+   108px → 144px, the ghost renders 36px too far to the left.
+   translateX(36px) compensates without touching the app bundle.
    ---------------------------------------------------------------- */
 [data-testid="character-ghost"],
 [aria-hidden="true"][style*="calc(108px"] {
-  /* The JS hardcodes calc(108px + Nch) — we can't override this via CSS alone.
-     The ghost is positioned absolutely inside the character element, so its
-     own left:0 is correct relative to the character container. */
+  transform: translateX(36px) !important;
 }
 
 /* ── Dual dialogue ──────────────────────────────────────────────────
