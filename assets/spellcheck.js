@@ -50,6 +50,11 @@
         spell = window.nspell;
         // Add screenplay-specific words
         SCREENPLAY_WORDS.forEach(w => spell.add(w));
+        // NOW apply personal dictionary (spell was null when loadPersonalDict() ran at boot)
+        try {
+          const saved = JSON.parse(localStorage.getItem(PERSONAL_KEY) || '[]');
+          saved.forEach(w => spell.add(w));
+        } catch {}
         spellReady = true;
         // Run an initial pass
         setTimeout(() => checkAll(), 500);
@@ -603,6 +608,7 @@
     const btn = document.createElement('button');
     btn.className = 'sw-menu-item';
     btn.setAttribute('role', 'menuitem');
+    btn.setAttribute('data-spell-toggle', 'true');
     btn.innerHTML = `
       <span class="sw-item-icon" aria-hidden="true">🔤</span>
       <span class="sw-item-label">Spelling &amp; Grammar</span>
@@ -648,7 +654,7 @@
         loadSpellChecker();
       }
 
-      if (attempts > 60 && spellReady) clearInterval(interval);
+      if (attempts > 60) clearInterval(interval);
     }, 500);
   }
 
