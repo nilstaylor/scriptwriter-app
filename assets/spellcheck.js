@@ -292,9 +292,20 @@
   }
 
   function getEditor() {
+    // Target the wrapping container so we walk ALL child text nodes,
+    // not just the first individually-contenteditable script element.
     return (
-      document.querySelector('[contenteditable="true"][data-testid="screenplay-editor"]') ||
-      document.querySelector('[contenteditable="true"].screenplay-editor') ||
+      document.querySelector('[data-testid="screenplay-editor"]') ||
+      document.querySelector('.script-page') ||
+      document.querySelector('.screenplay-editor')
+    );
+  }
+
+  function isInEditor() {
+    // Detect whether we're in the editor view (not the landing page)
+    return !!(
+      document.querySelector('[data-testid="screenplay-editor"]') ||
+      document.querySelector('.script-page') ||
       document.querySelector('[contenteditable="true"]')
     );
   }
@@ -535,10 +546,13 @@
     const bar = document.getElementById('sw-menubar');
     if (!bar) return false;
 
+    // Only show the spell check status when we're in the editor, not on the landing page
+    if (!isInEditor()) return false;
+
     const status = document.createElement('div');
     status.id = 'sw-spell-status';
     status.setAttribute('title', 'Click to toggle spell check');
-    status.innerHTML = `<span class="sw-spell-dot"></span><span class="sw-spell-text">Loading…</span>`;
+    status.innerHTML = `<span class="sw-spell-dot"></span><span class="sw-spell-text">Spell Check</span>`;
     status.style.marginLeft = 'auto';
 
     status.addEventListener('click', () => {
@@ -609,10 +623,11 @@
     btn.className = 'sw-menu-item';
     btn.setAttribute('role', 'menuitem');
     btn.setAttribute('data-spell-toggle', 'true');
+    const spellShortcut = /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? '⌘;' : 'Ctrl+;';
     btn.innerHTML = `
       <span class="sw-item-icon" aria-hidden="true">🔤</span>
       <span class="sw-item-label">Spelling &amp; Grammar</span>
-      <span class="sw-item-shortcut">⌘;</span>
+      <span class="sw-item-shortcut">${spellShortcut}</span>
     `;
     btn.addEventListener('click', () => {
       enabled = !enabled;
