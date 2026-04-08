@@ -1,164 +1,169 @@
 /*
- * Scriptwriter — Industry Standard Formatting Corrections
- * Based on WGA / Academy Nicholl / Final Draft / Sony specs.
- * All measurements verified against 8.5" × 11" page at 96 DPI.
+ * Scriptwriter — Fountain Format Compliance
+ * ──────────────────────────────────────────────────────────────────
+ * Based on the Fountain reference implementation by Nima Yousefi
+ * & John August:
+ *   https://github.com/nyousefi/Fountain  (ScriptCSS.css)
+ *   https://fountain.io/syntax/
  *
- * Standard reference:
- *   Page:           8.5" × 11" (816 × 1056px at 96dpi)
- *   Left margin:    1.5"  = 144px
- *   Right margin:   1.0"  = 96px
- *   Top margin:     1.0"  = 96px
- *   Bottom margin:  1.0"  = 96px
- *   Action:         left 1.5" → right 7.5" (6" wide = 576px text width)
- *   Scene heading:  same as action, ALL CAPS
- *   Character cue:  3.7" from page left (2.2" from left margin)
- *   Dialogue:       left 2.5", right 2.0" from page edges
- *   Parenthetical:  left 3.1", right 2.5" from page edges
- *   Transition:     flush right (~6.0" from left / right-aligned)
- *   Page number:    flush right, 0.5" from top
- *   Line height:    1.0 (single-spaced, Courier Prime 12pt)
- *   ~55 lines per page
+ * Fountain reference proportions (465px section content width):
+ *   Character:      width 180px = 38.7%  → centered
+ *   Dialogue:       width 310px = 66.7%  → centered
+ *   Parenthetical:  width 250px = 53.8%  → centered
+ *   Line-height:    1.3em
+ *   Scene heading:  bold, uppercase, margin-top 2.6em
+ *   Transition:     text-align right, uppercase (NOT bold)
+ *   Character:      uppercase (NOT bold)
+ *
+ * Page simulation: 8.5″ × 11″ at 96 DPI (816 × 1056px)
+ *   Left margin:    1.5″ = 144px
+ *   Right margin:   1.0″ = 96px
+ *   Top / Bottom:   1.0″ = 96px
+ *   Text area:      6.0″ = 576px
+ *
+ * Scaled to 576px text area (576 / 465 = 1.239):
+ *   Character:      180 × 1.239 ≈ 223px  → margin 177px each side
+ *   Dialogue:       310 × 1.239 ≈ 384px  → margin  96px each side
+ *   Parenthetical:  250 × 1.239 ≈ 310px  → margin 133px each side
  */
 
-/* ── Page canvas ────────────────────────────────────────────────────
-   Current:  padding: 72px 72px 72px 108px  (1.125" top/right/bottom, 1.125" left — wrong)
-   Fixed:    padding: 96px 96px 96px 144px  (1.0" top/right/bottom, 1.5" left)
-   ---------------------------------------------------------------- */
+/* ── Page canvas ─────────────────────────────────────────────────── */
 .script-page {
   padding: 96px 96px 96px 144px !important;
   max-width: 816px !important;
   min-height: 1056px !important;
-  /* Prevent accidental font changes */
   font-family: 'Courier Prime', 'Courier New', Courier, monospace !important;
   font-size: 12pt !important;
-  line-height: 1 !important;
+  line-height: 1.3 !important; /* Fountain: 14px/1.3em */
 }
 
-/* ── Scene Heading ──────────────────────────────────────────────────
-   Left margin: 0 (flush to left page margin = 1.5")
-   ALL CAPS, bold, 2 blank lines above, 1 blank line below.
-   24pt above = 2 × 12pt lines. 12pt below = 1 line. Correct. ✓
-   ---------------------------------------------------------------- */
+/* First child on the page — suppress extra top margin so the
+   content starts flush at the top padding edge.
+   Fountain: body > p:first-child { margin-top: 0 }            */
+.script-page > :first-child {
+  margin-top: 0 !important;
+}
+
+/* ── Scene Heading ───────────────────────────────────────────────
+   Fountain: bold, uppercase, margin-top 2.6em (double spacing),
+   padding-right 40px (for scene numbers), position relative.
+   Full width within text area.
+   ─────────────────────────────────────────────────────────────── */
 .element-scene-heading {
   margin-left: 0 !important;
   margin-right: 0 !important;
-  margin-top: 24pt !important;
-  margin-bottom: 12pt !important;
+  margin-top: 2.6em !important;
+  margin-bottom: 0 !important;
   text-transform: uppercase !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
+  font-weight: bold !important;
+  letter-spacing: normal !important;
+  position: relative !important;
 }
 
-/* ── Action / Description ───────────────────────────────────────────
-   Left: 0 (flush to left margin = 1.5")
-   Right: 0 (flush to right margin = 1.0")
-   Blank line (12pt) between action blocks.
-   ---------------------------------------------------------------- */
+/* ── Action / Description ────────────────────────────────────────
+   Fountain: default <p>, margin 1.3em auto.
+   Full width within text area.
+   ─────────────────────────────────────────────────────────────── */
 .element-action {
   margin-left: 0 !important;
   margin-right: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 12pt !important;
+  margin-top: 1.3em !important;
+  margin-bottom: 0 !important;
+  letter-spacing: normal !important;
 }
 
-/* ── Character Cue ──────────────────────────────────────────────────
-   Standard: 3.7" from page left = 355px from page left
-             With 144px left padding: margin-left = 355 - 144 = 211px
-   Current:  margin-left: 210px from text area (≈ 318px from page = 3.31") ← wrong
-   Fixed:    margin-left: 211px from text area (= 355px from page = 3.70") ← correct
-   1 blank line above character cue (12pt margin-top). ✓
-   ---------------------------------------------------------------- */
+/* ── Character Cue ───────────────────────────────────────────────
+   Fountain: width 180px, margin auto → CENTERED in section.
+   Scaled: 223px centered in 576px → 177px margin each side.
+   Uppercase per Fountain; NOT bold (Fountain omits font-weight
+   on .character — only .scene-heading gets bold).
+   ─────────────────────────────────────────────────────────────── */
 .element-character {
-  margin-left: 211px !important;
-  margin-right: 0 !important;
-  margin-top: 12pt !important;
+  margin-left: 177px !important;
+  margin-right: 177px !important;
+  margin-top: 1.3em !important;
   margin-bottom: 0 !important;
   text-transform: uppercase !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.05em !important;
+  font-weight: normal !important;
+  letter-spacing: normal !important;
 }
 
-/* ── Parenthetical ──────────────────────────────────────────────────
-   Standard: left 3.1" from page = 298px from page left
-             With 144px left padding: margin-left = 298 - 144 = 154px
-             right 2.5" from page = margin-right = 2.5" - 1.0"(right padding) = 1.5" = 144px
-   Current:  margin: 0 150px  (left = 258px from page = 2.69" ← wrong)
-   Fixed:    margin-left: 154px; margin-right: 144px
-   ---------------------------------------------------------------- */
-.element-parenthetical {
-  margin-left: 154px !important;
-  margin-right: 144px !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* ── Dialogue ───────────────────────────────────────────────────────
-   Standard: left 2.5" from page = 240px from page left
-             With 144px left padding: margin-left = 240 - 144 = 96px
-             right 2.0" from page: margin-right = 2.0" - 1.0"(right padding) = 1.0" = 96px
-   Current:  margin: 0 120px (left = 228px from page = 2.375" ← wrong)
-   Fixed:    margin-left: 96px; margin-right: 96px; margin-bottom: 12pt
-   ---------------------------------------------------------------- */
+/* ── Dialogue ────────────────────────────────────────────────────
+   Fountain: width 310px, margin auto → CENTERED in section.
+   Scaled: 384px centered in 576px → 96px margin each side.
+   ─────────────────────────────────────────────────────────────── */
 .element-dialogue {
   margin-left: 96px !important;
   margin-right: 96px !important;
   margin-top: 0 !important;
-  margin-bottom: 12pt !important;
+  margin-bottom: 0 !important;
 }
 
-/* ── Transition ─────────────────────────────────────────────────────
-   Standard: flush right (right-aligned to right page margin).
-   text-align: right on the existing text-area width is correct only if
-   the element spans the full text width. Ensure no extra left indent.
-   Also: 1 blank line above and below (12pt margins). ✓
-   ---------------------------------------------------------------- */
+/* ── Parenthetical ───────────────────────────────────────────────
+   Fountain: width 250px, margin auto → CENTERED in section.
+   Scaled: 310px centered in 576px → 133px margin each side.
+   ─────────────────────────────────────────────────────────────── */
+.element-parenthetical {
+  margin-left: 133px !important;
+  margin-right: 133px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Transition ──────────────────────────────────────────────────
+   Fountain: text-align right, text-transform uppercase.
+   NOT bold (Fountain only bolds .scene-heading).
+   Full width within text area.
+   ─────────────────────────────────────────────────────────────── */
 .element-transition {
   margin-left: 0 !important;
   margin-right: 0 !important;
-  margin-top: 12pt !important;
-  margin-bottom: 12pt !important;
+  margin-top: 1.3em !important;
+  margin-bottom: 1.3em !important;
   text-align: right !important;
   text-transform: uppercase !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
+  font-weight: normal !important;
+  letter-spacing: normal !important;
 }
 
-/* ── Shot / General / Centered ──────────────────────────────────────
-   Shot: same as scene heading margins (flush left in text area).
-   Centered: centered within text area (margin auto).
-   ---------------------------------------------------------------- */
+/* ── Shot ────────────────────────────────────────────────────────
+   Like scene heading: full width, uppercase, bold.
+   ─────────────────────────────────────────────────────────────── */
 .element-shot {
   margin-left: 0 !important;
   margin-right: 0 !important;
-  margin-top: 12pt !important;
-  margin-bottom: 12pt !important;
+  margin-top: 1.3em !important;
+  margin-bottom: 1.3em !important;
   text-transform: uppercase !important;
+  font-weight: bold !important;
+  letter-spacing: normal !important;
 }
 
+/* ── Centered ────────────────────────────────────────────────────
+   Fountain: .center { text-align: center !important }
+   ─────────────────────────────────────────────────────────────── */
 .element-centered {
   margin-left: 0 !important;
   margin-right: 0 !important;
   text-align: center !important;
-  margin-top: 12pt !important;
-  margin-bottom: 12pt !important;
+  margin-top: 1.3em !important;
+  margin-bottom: 1.3em !important;
 }
 
-/* ── Lyrics / Song lines ────────────────────────────────────────────
-   Indented like dialogue but italic. Keep relative to new dialogue margin.
-   ---------------------------------------------------------------- */
+/* ── Lyrics ──────────────────────────────────────────────────────
+   Same width as dialogue block, italic.
+   ─────────────────────────────────────────────────────────────── */
 .element-lyrics {
   margin-left: 96px !important;
   margin-right: 96px !important;
-  margin-top: 6pt !important;
-  margin-bottom: 6pt !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   font-style: italic !important;
 }
 
-/* ── Page Number ────────────────────────────────────────────────────
-   Standard: flush right, 0.5" (48px) from top of page.
-   With new 96px top padding, position: absolute top at 48px.
-   Right-aligned at the right margin (96px from page edge).
-   ---------------------------------------------------------------- */
+/* ── Page Number ─────────────────────────────────────────────────
+   Flush right, 0.5″ from top of page (48px).
+   ─────────────────────────────────────────────────────────────── */
 .page-number {
   top: 48px !important;
   right: 96px !important;
@@ -166,42 +171,23 @@
   font-size: 12pt !important;
 }
 
-/* ── Responsive override suppression ───────────────────────────────
-   The bundle has a small-screen override that resets margins to
-   percentages. Keep standard measurements active down to tablet.
-   Below 700px (mobile) we allow the responsive override.
-   ---------------------------------------------------------------- */
-@media (min-width: 700px) {
-  .element-character {
-    margin-left: 211px !important;
-  }
-  .element-parenthetical {
-    margin-left: 154px !important;
-    margin-right: 144px !important;
-  }
-  .element-dialogue {
-    margin-left: 96px !important;
-    margin-right: 96px !important;
-  }
-}
-
-/* ── Ghost / autocomplete text alignment ───────────────────────────
+/* ── Ghost / autocomplete text alignment ─────────────────────────
    The app bundle hardcodes left: calc(108px + Nch) for the ghost
    text overlay. Since the left page margin was corrected from
    108px → 144px, the ghost renders 36px too far to the left.
    translateX(36px) compensates without touching the app bundle.
-   ---------------------------------------------------------------- */
+   ─────────────────────────────────────────────────────────────── */
 [data-testid="character-ghost"],
 [aria-hidden="true"][style*="calc(108px"] {
   transform: translateX(36px) !important;
 }
 
-/* ── Dual dialogue ──────────────────────────────────────────────────
-   Dual dialogue columns: each column gets roughly half the dialogue
-   width. The outer row spans the full text area.
-   ---------------------------------------------------------------- */
+/* ── Dual dialogue ───────────────────────────────────────────────
+   Fountain: .dual-dialogue columns at 228px each (49% of 465px).
+   The app uses CSS Grid (1fr 1fr) which is equivalent.
+   ─────────────────────────────────────────────────────────────── */
 .dual-dialogue-row {
-  margin-bottom: 12pt !important;
+  margin-bottom: 1.3em !important;
 }
 
 .element-dual-dialogue-left,
@@ -210,9 +196,29 @@
   padding: 4px 8px !important;
 }
 
-/* ── Export / print page layout ─────────────────────────────────────
+/* ── Responsive override suppression ─────────────────────────────
+   The bundle has responsive rules that switch to percentage-based
+   margins. Keep Fountain-standard measurements active above 700px.
+   Below 700px the responsive overrides are allowed.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 700px) {
+  .element-character {
+    margin-left: 177px !important;
+    margin-right: 177px !important;
+  }
+  .element-parenthetical {
+    margin-left: 133px !important;
+    margin-right: 133px !important;
+  }
+  .element-dialogue {
+    margin-left: 96px !important;
+    margin-right: 96px !important;
+  }
+}
+
+/* ── Export / print page layout ──────────────────────────────────
    Ensure PDF export (html2canvas) respects the same margins.
-   ---------------------------------------------------------------- */
+   ─────────────────────────────────────────────────────────────── */
 @media print {
   .script-page {
     padding: 96px 96px 96px 144px !important;
@@ -221,10 +227,9 @@
   }
 }
 
-/* ── Hide landing page tutorial video ───────────────────────────────
-   Removed per user request. Hides the entire "How it works" section
-   (eyebrow, heading, subheading, and video player).
-   ---------------------------------------------------------------- */
+/* ── Hide landing page tutorial video ────────────────────────────
+   Removed per user request.
+   ─────────────────────────────────────────────────────────────── */
 .home-video-section {
   display: none !important;
 }
