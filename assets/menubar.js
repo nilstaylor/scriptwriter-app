@@ -42,6 +42,21 @@
     if (el) el.click();
   }
 
+  // Full pointer + mouse event sequence — needed for Radix UI dropdowns
+  // which ignore bare .click() calls.
+  function simulateClick(el) {
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const opts = { bubbles: true, cancelable: true, clientX: x, clientY: y, view: window };
+    el.dispatchEvent(new PointerEvent('pointerdown', { ...opts, pointerId: 1 }));
+    el.dispatchEvent(new MouseEvent('mousedown', opts));
+    el.dispatchEvent(new PointerEvent('pointerup', { ...opts, pointerId: 1 }));
+    el.dispatchEvent(new MouseEvent('mouseup', opts));
+    el.dispatchEvent(new MouseEvent('click', opts));
+  }
+
   // ── Fullscreen toggle ────────────────────────────────────────────
 
   function toggleFullscreen() {
@@ -78,7 +93,23 @@
           label: 'Open FDX…',
           shortcut: shortcut('Cmd+O'),
           icon: '📂',
-          action: () => clickTestId('open-fdx-btn') || document.querySelector('[data-testid="open-fdx-btn"], button[title*="Open FDX"], button[title*="Import"]')?.click(),
+          action: () => {
+            // The app's import is inside the Export dropdown — open it first, then click Import FDX.
+            // Radix UI triggers need full pointer events, not bare .click().
+            const exportBtn = document.querySelector('[data-testid="export-btn"]');
+            if (exportBtn) {
+              simulateClick(exportBtn);
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  const importBtn = document.querySelector('[data-testid="import-fdx"]');
+                  if (importBtn) simulateClick(importBtn);
+                }, 150);
+              });
+            } else {
+              const homeBtn = document.querySelector('[data-testid="import-fdx-home-btn"]');
+              if (homeBtn) simulateClick(homeBtn);
+            }
+          },
         },
         { type: 'separator' },
         {
@@ -96,12 +127,19 @@
           shortcut: shortcut('Cmd+Shift+E'),
           icon: '⬆️',
           action: () => {
-            // Click the Export FDX button in toolbar (look for text content)
-            const toolbar = document.querySelector('[data-testid="top-toolbar"]') || document.body;
-            const btns = [...toolbar.querySelectorAll('button')];
-            const fdx = btns.find(b => b.textContent.trim().includes('Export') && (b.textContent.includes('FDX') || b.title?.includes('FDX')));
-            if (fdx) fdx.click();
-            else triggerKey('e', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
+            // Open the Export dropdown, then click Export FDX
+            const exportBtn = document.querySelector('[data-testid="export-btn"]');
+            if (exportBtn) {
+              simulateClick(exportBtn);
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  const fdxItem = document.querySelector('[data-testid="export-fdx"]');
+                  if (fdxItem) simulateClick(fdxItem);
+                }, 150);
+              });
+            } else {
+              triggerKey('e', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
+            }
           },
         },
         {
@@ -109,11 +147,19 @@
           shortcut: shortcut('Cmd+Shift+P'),
           icon: '🖨️',
           action: () => {
-            const toolbar2 = document.querySelector('[data-testid="top-toolbar"]') || document.body;
-            const btns2 = [...toolbar2.querySelectorAll('button')];
-            const pdf = btns2.find(b => (b.textContent.trim().includes('Export') || b.textContent.trim() === 'PDF') && (b.textContent.includes('PDF') || b.title?.includes('PDF')));
-            if (pdf) pdf.click();
-            else triggerKey('p', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
+            // Open the Export dropdown, then click Export PDF
+            const exportBtn = document.querySelector('[data-testid="export-btn"]');
+            if (exportBtn) {
+              simulateClick(exportBtn);
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  const pdfItem = document.querySelector('[data-testid="export-pdf"]');
+                  if (pdfItem) simulateClick(pdfItem);
+                }, 150);
+              });
+            } else {
+              triggerKey('p', isMac ? { meta: true, shift: true } : { ctrl: true, shift: true });
+            }
           },
         },
         { type: 'separator' },
