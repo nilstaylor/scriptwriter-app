@@ -891,4 +891,25 @@
     }
   }, true);
 
+  // ── Mobile landscape: auto-collapse sidebars ─────────────────────
+
+  const mobileLandscapeMQ = window.matchMedia('(orientation: landscape) and (max-height: 500px)');
+
+  function collapsePanelsForLandscape(mq) {
+    if (!mq.matches) return;
+    // Only act inside the editor (panels exist only there)
+    const leftPanel  = document.querySelector('[data-testid="left-panel"]');
+    const rightPanel = document.querySelector('[data-testid="right-panel"]');
+    if (leftPanel && leftPanel.offsetWidth > 10) {
+      clickTestId('toggle-left-panel');
+    }
+    if (rightPanel && rightPanel.offsetWidth > 10) {
+      clickTestId('toggle-right-panel');
+    }
+  }
+
+  mobileLandscapeMQ.addEventListener('change', collapsePanelsForLandscape);
+  // Also check on first load / navigation into editor
+  setTimeout(() => collapsePanelsForLandscape(mobileLandscapeMQ), 600);
+
 })();
