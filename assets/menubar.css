@@ -8,7 +8,7 @@
   background: hsl(var(--background, 224 71% 4%));
   border-bottom: 1px solid hsl(var(--border, 215 28% 17%));
   position: relative;
-  z-index: 100;
+  z-index: 9999;  /* Must be above #sw-menu-backdrop (9998) */
   flex-shrink: 0;
   font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
   user-select: none;
@@ -270,4 +270,60 @@ body {
 .dark #sw-menubar {
   background: hsl(224 71% 4%);
   border-bottom-color: hsl(215 28% 15%);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE — compact menu bar + full-width dropdowns
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #sw-menubar {
+    height: 26px;
+    padding: 0 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #sw-menubar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sw-menu-trigger {
+    padding: 2px 5px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* Dropdowns fill screen width on mobile */
+  .sw-dropdown {
+    min-width: 200px;
+    max-width: calc(100vw - 16px);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .sw-menu-item {
+    padding: 8px 10px 8px 28px;  /* Larger touch targets */
+    font-size: 13px;
+  }
+
+  .sw-menu-label {
+    padding: 6px 10px 3px 28px;
+  }
+
+  /* Hide spell status text on very narrow screens */
+  #sw-spell-status .sw-spell-text {
+    display: none;
+  }
+  #sw-spell-status {
+    padding: 0 4px;
+  }
+}
+
+/* Very small screens — even more compact */
+@media (max-width: 380px) {
+  .sw-menu-trigger {
+    padding: 2px 3px;
+    font-size: 10px;
+  }
 }
