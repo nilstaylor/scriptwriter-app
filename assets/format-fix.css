@@ -227,6 +227,25 @@
   }
 }
 
+/* ── Mobile landscape: auto-hide sidebars ────────────────────────
+   On phones in landscape (viewport height ≤ 500px), both the left
+   scene-navigator panel and the right inspector panel are hidden
+   to maximise editor real estate.  The JS in menubar.js also
+   programmatically toggles them so the app's internal state stays
+   consistent.  The user can still re-open them manually.
+   ─────────────────────────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-testid="left-panel"],
+  [data-testid="right-panel"] {
+    display: none !important;
+  }
+
+  /* Let the editor fill the freed horizontal space */
+  .script-page {
+    max-width: 100% !important;
+  }
+}
+
 /* ── Hide landing page tutorial video ────────────────────────────
    Removed per user request.
    ─────────────────────────────────────────────────────────────── */
