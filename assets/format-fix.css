@@ -27,6 +27,10 @@
  *   Parenthetical:  250 × 1.239 ≈ 310px  → margin 133px each side
  */
 
+/* ══════════════════════════════════════════════════════════════════
+   DESKTOP — Fountain-precise page simulation (≥ 769px)
+   ══════════════════════════════════════════════════════════════════ */
+
 /* ── Page canvas ─────────────────────────────────────────────────── */
 .script-page {
   padding: 96px 96px 96px 144px !important;
@@ -37,18 +41,12 @@
   line-height: 1.3 !important; /* Fountain: 14px/1.3em */
 }
 
-/* First child on the page — suppress extra top margin so the
-   content starts flush at the top padding edge.
-   Fountain: body > p:first-child { margin-top: 0 }            */
+/* First child on the page — suppress extra top margin */
 .script-page > :first-child {
   margin-top: 0 !important;
 }
 
-/* ── Scene Heading ───────────────────────────────────────────────
-   Fountain: bold, uppercase, margin-top 2.6em (double spacing),
-   padding-right 40px (for scene numbers), position relative.
-   Full width within text area.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Scene Heading ───────────────────────────────────────────────── */
 .element-scene-heading {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -60,10 +58,7 @@
   position: relative !important;
 }
 
-/* ── Action / Description ────────────────────────────────────────
-   Fountain: default <p>, margin 1.3em auto.
-   Full width within text area.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Action / Description ────────────────────────────────────────── */
 .element-action {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -72,12 +67,7 @@
   letter-spacing: normal !important;
 }
 
-/* ── Character Cue ───────────────────────────────────────────────
-   Fountain: width 180px, margin auto → CENTERED in section.
-   Scaled: 223px centered in 576px → 177px margin each side.
-   Uppercase per Fountain; NOT bold (Fountain omits font-weight
-   on .character — only .scene-heading gets bold).
-   ─────────────────────────────────────────────────────────────── */
+/* ── Character Cue ───────────────────────────────────────────────── */
 .element-character {
   margin-left: 177px !important;
   margin-right: 177px !important;
@@ -88,10 +78,7 @@
   letter-spacing: normal !important;
 }
 
-/* ── Dialogue ────────────────────────────────────────────────────
-   Fountain: width 310px, margin auto → CENTERED in section.
-   Scaled: 384px centered in 576px → 96px margin each side.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Dialogue ────────────────────────────────────────────────────── */
 .element-dialogue {
   margin-left: 96px !important;
   margin-right: 96px !important;
@@ -99,10 +86,7 @@
   margin-bottom: 0 !important;
 }
 
-/* ── Parenthetical ───────────────────────────────────────────────
-   Fountain: width 250px, margin auto → CENTERED in section.
-   Scaled: 310px centered in 576px → 133px margin each side.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Parenthetical ───────────────────────────────────────────────── */
 .element-parenthetical {
   margin-left: 133px !important;
   margin-right: 133px !important;
@@ -110,11 +94,7 @@
   margin-bottom: 0 !important;
 }
 
-/* ── Transition ──────────────────────────────────────────────────
-   Fountain: text-align right, text-transform uppercase.
-   NOT bold (Fountain only bolds .scene-heading).
-   Full width within text area.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Transition ──────────────────────────────────────────────────── */
 .element-transition {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -126,9 +106,7 @@
   letter-spacing: normal !important;
 }
 
-/* ── Shot ────────────────────────────────────────────────────────
-   Like scene heading: full width, uppercase, bold.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Shot ────────────────────────────────────────────────────────── */
 .element-shot {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -139,9 +117,7 @@
   letter-spacing: normal !important;
 }
 
-/* ── Centered ────────────────────────────────────────────────────
-   Fountain: .center { text-align: center !important }
-   ─────────────────────────────────────────────────────────────── */
+/* ── Centered ────────────────────────────────────────────────────── */
 .element-centered {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -150,9 +126,7 @@
   margin-bottom: 1.3em !important;
 }
 
-/* ── Lyrics ──────────────────────────────────────────────────────
-   Same width as dialogue block, italic.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Lyrics ──────────────────────────────────────────────────────── */
 .element-lyrics {
   margin-left: 96px !important;
   margin-right: 96px !important;
@@ -161,9 +135,7 @@
   font-style: italic !important;
 }
 
-/* ── Page Number ─────────────────────────────────────────────────
-   Flush right, 0.5″ from top of page (48px).
-   ─────────────────────────────────────────────────────────────── */
+/* ── Page Number ─────────────────────────────────────────────────── */
 .page-number {
   top: 48px !important;
   right: 96px !important;
@@ -171,21 +143,13 @@
   font-size: 12pt !important;
 }
 
-/* ── Ghost / autocomplete text alignment ─────────────────────────
-   The app bundle hardcodes left: calc(108px + Nch) for the ghost
-   text overlay. Since the left page margin was corrected from
-   108px → 144px, the ghost renders 36px too far to the left.
-   translateX(36px) compensates without touching the app bundle.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Ghost / autocomplete text alignment ─────────────────────────── */
 [data-testid="character-ghost"],
 [aria-hidden="true"][style*="calc(108px"] {
   transform: translateX(36px) !important;
 }
 
-/* ── Dual dialogue ───────────────────────────────────────────────
-   Fountain: .dual-dialogue columns at 228px each (49% of 465px).
-   The app uses CSS Grid (1fr 1fr) which is equivalent.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Dual dialogue ───────────────────────────────────────────────── */
 .dual-dialogue-row {
   margin-bottom: 1.3em !important;
 }
@@ -196,11 +160,7 @@
   padding: 4px 8px !important;
 }
 
-/* ── Responsive override suppression ─────────────────────────────
-   The bundle has responsive rules that switch to percentage-based
-   margins. Keep Fountain-standard measurements active above 700px.
-   Below 700px the responsive overrides are allowed.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Desktop responsive reinforcement (≥ 700px) ─────────────────── */
 @media (min-width: 700px) {
   .element-character {
     margin-left: 177px !important;
@@ -216,39 +176,342 @@
   }
 }
 
-/* ── Export / print page layout ──────────────────────────────────
-   Ensure PDF export (html2canvas) respects the same margins.
-   ─────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE PORTRAIT — proportional layout for small screens (≤ 768px)
+   ──────────────────────────────────────────────────────────────────
+   On mobile, exact Fountain pixel margins are impractical.
+   Instead, we preserve the proportional hierarchy:
+     Character    (narrowest, most indented)
+     Parenthetical (medium indent)
+     Dialogue      (least indent, widest)
+     Action, Scene Heading, Transition = full width
+   Using percentages that maintain the same visual relationships.
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* ── Page canvas — comfortable mobile padding ──────────────── */
+  .script-page {
+    padding: 28px 16px 28px 20px !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-size: 11pt !important;
+    line-height: 1.35 !important;
+  }
+
+  /* ── Scene Heading — tighter top margin on mobile ──────────── */
+  .element-scene-heading {
+    margin-top: 1.8em !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Action — slight top margin ────────────────────────────── */
+  .element-action {
+    margin-top: 1em !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Character — proportionally centered (≈38.7% width) ──── */
+  .element-character {
+    margin-left: 28% !important;
+    margin-right: 5% !important;
+    margin-top: 1em !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Dialogue — proportionally centered (≈66.7% width) ────── */
+  .element-dialogue {
+    margin-left: 10% !important;
+    margin-right: 10% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Parenthetical — proportionally centered (≈53.8% width) ─ */
+  .element-parenthetical {
+    margin-left: 18% !important;
+    margin-right: 18% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Transition — right-aligned, tighter vertical ──────────── */
+  .element-transition {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+  }
+
+  /* ── Shot — tighter vertical ───────────────────────────────── */
+  .element-shot {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+  }
+
+  /* ── Lyrics — same as dialogue ─────────────────────────────── */
+  .element-lyrics {
+    margin-left: 10% !important;
+    margin-right: 10% !important;
+  }
+
+  /* ── Page Number — repositioned for mobile ─────────────────── */
+  .page-number {
+    top: 8px !important;
+    right: 16px !important;
+    font-size: 10pt !important;
+  }
+
+  /* ── Ghost text — no offset needed on mobile ───────────────── */
+  [data-testid="character-ghost"],
+  [aria-hidden="true"][style*="calc(108px"] {
+    transform: none !important;
+  }
+
+  /* ── Dual dialogue — stack vertically on mobile ────────────── */
+  .dual-dialogue-row {
+    display: block !important;
+    margin-bottom: 1em !important;
+  }
+  .element-dual-dialogue-left,
+  .element-dual-dialogue-right {
+    margin: 0 !important;
+    padding: 2px 4px !important;
+  }
+
+  /* ── Centered — full width ─────────────────────────────────── */
+  .element-centered {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   VERY SMALL SCREENS (≤ 420px) — e.g. iPhone SE
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 420px) {
+  .script-page {
+    padding: 20px 12px 20px 16px !important;
+    font-size: 10.5pt !important;
+  }
+
+  .element-character {
+    margin-left: 22% !important;
+    margin-right: 2% !important;
+  }
+
+  .element-parenthetical {
+    margin-left: 12% !important;
+    margin-right: 12% !important;
+  }
+
+  .element-dialogue {
+    margin-left: 6% !important;
+    margin-right: 6% !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE LANDSCAPE — auto-hide sidebars
+   ══════════════════════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-testid="left-panel"],
+  [data-testid="right-panel"] {
+    display: none !important;
+  }
+  .script-page {
+    max-width: 100% !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PRINT / PDF EXPORT
+   ══════════════════════════════════════════════════════════════════ */
 @media print {
   .script-page {
     padding: 96px 96px 96px 144px !important;
     max-width: 816px !important;
     box-shadow: none !important;
   }
-}
 
-/* ── Mobile landscape: auto-hide sidebars ────────────────────────
-   On phones in landscape (viewport height ≤ 500px), both the left
-   scene-navigator panel and the right inspector panel are hidden
-   to maximise editor real estate.  The JS in menubar.js also
-   programmatically toggles them so the app's internal state stays
-   consistent.  The user can still re-open them manually.
-   ─────────────────────────────────────────────────────────────── */
-@media (orientation: landscape) and (max-height: 500px) {
-  [data-testid="left-panel"],
-  [data-testid="right-panel"] {
-    display: none !important;
+  .element-character {
+    margin-left: 177px !important;
+    margin-right: 177px !important;
+  }
+  .element-dialogue {
+    margin-left: 96px !important;
+    margin-right: 96px !important;
+  }
+  .element-parenthetical {
+    margin-left: 133px !important;
+    margin-right: 133px !important;
   }
 
-  /* Let the editor fill the freed horizontal space */
-  .script-page {
-    max-width: 100% !important;
+  /* ── Watermark overlay (toggled via JS) ────────────────────── */
+  .sw-watermark-active .script-page::after {
+    content: attr(data-watermark);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 72pt;
+    font-family: 'Courier Prime', monospace;
+    color: rgba(0, 0, 0, 0.06);
+    pointer-events: none;
+    z-index: 1;
+    white-space: nowrap;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
+
+  /* ── Header/Footer (set via JS) ────────────────────────────── */
+  @page {
+    margin: 0.5in;
+  }
+
+  .sw-print-header,
+  .sw-print-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+    font-size: 9pt;
+    color: #999;
+  }
+  .sw-print-header { top: 0; }
+  .sw-print-footer { bottom: 0; }
 }
 
-/* ── Hide landing page tutorial video ────────────────────────────
-   Removed per user request.
-   ─────────────────────────────────────────────────────────────── */
+/* ── Hide landing page tutorial video ────────────────────────────── */
 .home-video-section {
   display: none !important;
+}
+
+/* ── Title Page (injected by studio-features.js) ─────────────────── */
+#sw-title-page {
+  display: none;
+  page-break-after: always;
+  text-align: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 12pt;
+  line-height: 1.5;
+  padding: 0;
+  min-height: 1056px;
+  position: relative;
+}
+
+#sw-title-page.sw-visible {
+  display: block;
+}
+
+#sw-title-page .sw-tp-title {
+  margin-top: 40%;
+  font-size: 24pt;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#sw-title-page .sw-tp-byline {
+  margin-top: 2em;
+  font-size: 12pt;
+}
+
+#sw-title-page .sw-tp-author {
+  font-size: 14pt;
+}
+
+#sw-title-page .sw-tp-contact {
+  position: absolute;
+  bottom: 96px;
+  left: 144px;
+  text-align: left;
+  font-size: 10pt;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+#sw-title-page .sw-tp-draft {
+  position: absolute;
+  bottom: 96px;
+  right: 96px;
+  text-align: right;
+  font-size: 10pt;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  #sw-title-page {
+    min-height: auto;
+    padding: 40px 20px;
+  }
+  #sw-title-page .sw-tp-title {
+    margin-top: 30%;
+    font-size: 18pt;
+  }
+  #sw-title-page .sw-tp-contact {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 3em;
+    text-align: center;
+  }
+  #sw-title-page .sw-tp-draft {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin-top: 1em;
+    text-align: center;
+  }
+}
+
+/* ── Watermark preview (on-screen) ───────────────────────────────── */
+.sw-watermark-active .script-page {
+  position: relative;
+}
+.sw-watermark-active .script-page::after {
+  content: attr(data-watermark);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 60pt;
+  font-family: 'Courier Prime', monospace;
+  color: rgba(128, 128, 128, 0.08);
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Lock script indicator ───────────────────────────────────────── */
+.sw-script-locked .script-page {
+  opacity: 0.85;
+}
+.sw-script-locked [contenteditable] {
+  caret-color: transparent;
+}
+#sw-lock-banner {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: hsl(45, 93%, 47%);
+  color: #000;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+.sw-script-locked #sw-lock-banner {
+  display: flex;
+}
+
+/* ── Revision history badge ──────────────────────────────────────── */
+#sw-autosave-status {
+  font-size: 10px;
+  color: hsl(215, 20%, 40%);
+  padding: 0 6px;
+  white-space: nowrap;
+  font-family: 'Satoshi', system-ui, sans-serif;
 }
