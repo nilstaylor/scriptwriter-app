@@ -93,22 +93,65 @@
           label: 'Open FDX…',
           shortcut: shortcut('Cmd+O'),
           icon: '📂',
+          trusted: true,
           action: () => {
-            // The app's import is inside the Export dropdown — open it first, then click Import FDX.
-            // Radix UI triggers need full pointer events, not bare .click().
-            const exportBtn = document.querySelector('[data-testid="export-btn"]');
-            if (exportBtn) {
-              simulateClick(exportBtn);
-              requestAnimationFrame(() => {
+            // Open our OWN file input synchronously (preserves user-gesture trust
+            // so the browser allows the file-picker). When the user picks a file
+            // we monkey-patch the next HTMLInputElement.click() so the app's
+            // internal import handler receives the same file.
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.fdx,.xml';
+            fileInput.style.display = 'none';
+
+            fileInput.addEventListener('change', () => {
+              const file = fileInput.files?.[0];
+              if (!file) return;
+
+              // Intercept the next file-input .click() the app fires internally
+              const origClick = HTMLInputElement.prototype.click;
+              HTMLInputElement.prototype.click = function () {
+                if (this.type === 'file') {
+                  HTMLInputElement.prototype.click = origClick; // restore
+                  try {
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    Object.defineProperty(this, 'files', {
+                      get: () => dt.files,
+                      configurable: true,
+                    });
+                  } catch (_) { /* Safari fallback — onchange still fires */ }
+                  if (typeof this.onchange === 'function') {
+                    this.onchange({ target: this });
+                  }
+                  this.dispatchEvent(new Event('change', { bubbles: true }));
+                  return;
+                }
+                origClick.call(this);
+              };
+
+              // Now trigger the app's import path
+              const exportBtn = document.querySelector('[data-testid="export-btn"]');
+              if (exportBtn) {
+                simulateClick(exportBtn);
                 setTimeout(() => {
                   const importBtn = document.querySelector('[data-testid="import-fdx"]');
                   if (importBtn) simulateClick(importBtn);
-                }, 150);
-              });
-            } else {
-              const homeBtn = document.querySelector('[data-testid="import-fdx-home-btn"]');
-              if (homeBtn) simulateClick(homeBtn);
-            }
+                }, 200);
+              } else {
+                const homeBtn = document.querySelector('[data-testid="import-fdx-home-btn"]');
+                if (homeBtn) simulateClick(homeBtn);
+              }
+
+              // Safety: restore prototype after 3 s no matter what
+              setTimeout(() => {
+                HTMLInputElement.prototype.click = origClick;
+              }, 3000);
+            });
+
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            fileInput.remove();
           },
         },
         { type: 'separator' },
@@ -671,7 +714,13 @@
 
           btn.addEventListener('click', () => {
             closeAll();
-            setTimeout(() => { if (item.action) item.action(); }, 50);
+            if (item.trusted) {
+              // Run synchronously to preserve browser user-gesture trust
+              // (needed for file-picker dialogs)
+              if (item.action) item.action();
+            } else {
+              setTimeout(() => { if (item.action) item.action(); }, 50);
+            }
           });
           dropdown.appendChild(btn);
         }
