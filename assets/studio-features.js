@@ -698,6 +698,56 @@
   }
 
   // ══════════════════════════════════════════════════════════════════
+  // 8. AUTO-DETECT SCENE HEADINGS (INT / EXT / EST / I/E)
+  // ══════════════════════════════════════════════════════════════════
+  //
+  // Per Fountain spec, a scene heading starts with one of:
+  //   INT  EXT  EST  INT./EXT.  INT/EXT  I/E
+  // followed by a period or space.
+  //
+  // When the user types one of these prefixes into any non-scene-heading
+  // element, auto-convert it to a scene heading by clicking the app's
+  // element-type-scene-heading button.
+  // ──────────────────────────────────────────────────────────────────
+
+  const SCENE_PREFIX_RE = /^\s*(INT|EXT|EST|INT\.\/EXT|INT\/EXT|I\/E)[.\s]/i;
+
+  function setupSceneAutoDetect() {
+    const editor =
+      document.querySelector('[data-testid="screenplay-editor"]') ||
+      document.querySelector('.script-page');
+    if (!editor || editor._swSceneAutoDetect) return false;
+    editor._swSceneAutoDetect = true;
+
+    editor.addEventListener('input', (e) => {
+      // Find the actual contenteditable element being typed in
+      const target =
+        e.target.closest('[data-testid^="element-"]') ||
+        e.target.closest('[contenteditable="true"]');
+      if (!target) return;
+
+      const testId = target.getAttribute('data-testid') || '';
+      // Already a scene heading — nothing to do
+      if (testId.includes('scene-heading')) return;
+
+      const text = target.textContent || '';
+      if (SCENE_PREFIX_RE.test(text)) {
+        // Ensure the element is focused / selected before clicking the type button
+        if (document.activeElement !== target) target.focus();
+
+        const sceneBtn = document.querySelector(
+          '[data-testid="element-type-scene-heading"]'
+        );
+        if (sceneBtn) {
+          sceneBtn.click();
+        }
+      }
+    }, true); // capture phase so we see all input events
+
+    return true;
+  }
+
+  // ══════════════════════════════════════════════════════════════════
   // EXPOSE API for menu bar integration
   // ══════════════════════════════════════════════════════════════════
 
@@ -730,11 +780,12 @@
     const tpData = getTitlePageData();
     if (tpData.title || tpData.author) renderTitlePage(tpData);
 
-    // Set up auto-save detection (retry until editor is available)
+    // Set up auto-save detection and scene auto-detect (retry until editor is available)
     let attempts = 0;
     const interval = setInterval(() => {
       attempts++;
       detectAutoSave();
+      setupSceneAutoDetect();
       if (attempts > 60) clearInterval(interval);
     }, 500);
   }
