@@ -108,12 +108,34 @@
 
     // ── Tab switching logic ─────────────────────────────────────
     tabBtn.addEventListener('click', () => {
-      // Deactivate all existing tabs
+      const isActive = panel.classList.contains('sw-visible');
+
+      if (isActive) {
+        // Toggle OFF — deactivate our tab, re-show previous panels
+        tabBtn.setAttribute('aria-selected', 'false');
+        tabBtn.classList.remove('sw-tab-active');
+        panel.classList.remove('sw-visible');
+        panel.style.display = 'none';
+        // Re-show panels we hid
+        hiddenByUs.forEach(p => {
+          p.style.display = '';
+          p.setAttribute('data-state', 'active');
+        });
+        hiddenByUs.clear();
+        // Re-activate the first Radix tab as fallback
+        const firstTab = tabsContainer.querySelector('[role="tab"]:not(#sw-scratchpad-tab-btn)');
+        if (firstTab) {
+          firstTab.setAttribute('data-state', 'active');
+          firstTab.click();
+        }
+        return;
+      }
+
+      // Toggle ON — deactivate all existing tabs, show scratchpad
       const allTabs = tabsContainer.querySelectorAll('[role="tab"], button');
       allTabs.forEach(t => {
         t.setAttribute('aria-selected', 'false');
         t.classList.remove('sw-tab-active');
-        // Also remove Radix active state
         t.setAttribute('data-state', 'inactive');
         t.style.borderBottomColor = '';
         t.style.color = '';
@@ -135,6 +157,7 @@
       tabBtn.setAttribute('data-state', 'active');
       tabBtn.classList.add('sw-tab-active');
       panel.classList.add('sw-visible');
+      panel.style.display = 'flex';
       textarea.focus();
     });
 
