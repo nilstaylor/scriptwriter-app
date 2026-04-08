@@ -121,8 +121,40 @@
           label: 'Title Page…',
           icon: '🏷️',
           action: () => {
-            const titleEl = document.querySelector('[data-testid="script-title"]');
-            if (titleEl) titleEl.click();
+            if (window.swStudioFeatures) window.swStudioFeatures.showTitlePageDialog();
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Header & Footer…',
+          icon: '📄',
+          action: () => {
+            if (window.swStudioFeatures) window.swStudioFeatures.showHeaderFooterDialog();
+          },
+        },
+        {
+          label: 'Watermark…',
+          icon: '💧',
+          action: () => {
+            if (window.swStudioFeatures) window.swStudioFeatures.showWatermarkDialog();
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Lock Screenplay',
+          icon: '🔒',
+          id: 'sw-menu-lock-script',
+          action: () => {
+            if (window.swStudioFeatures) window.swStudioFeatures.toggleLockScript();
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Revision History…',
+          shortcut: shortcut('Cmd+Shift+H'),
+          icon: '📋',
+          action: () => {
+            if (window.swStudioFeatures) window.swStudioFeatures.showRevisionHistory();
           },
         },
         { type: 'separator' },
@@ -241,10 +273,17 @@
         },
         { type: 'separator' },
         {
+          label: 'Scene Numbers',
+          icon: '#️⃣',
+          id: 'sw-menu-scene-numbers',
+          action: () => {
+            if (window.swStudioFeatures) window.swStudioFeatures.toggleSceneNumbers();
+          },
+        },
+        {
           label: 'Script Summary',
           icon: '📊',
           action: () => {
-            // Navigate to summary panel if available
             const btns = [...document.querySelectorAll('button')];
             const summary = btns.find(b => b.textContent.trim() === 'Script Summary' || b.textContent.includes('Summary'));
             if (summary) summary.click();
