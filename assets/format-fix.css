@@ -515,3 +515,77 @@
   white-space: nowrap;
   font-family: 'Satoshi', system-ui, sans-serif;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE CURSOR STABILITY — prevents cursor jumping on iOS/Android
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1. Dynamic viewport height — overrides h-screen (100vh) so the
+      layout truly shrinks when the virtual keyboard opens.
+      --sw-vh is set in real-time by mobile-fix.js              */
+.h-screen {
+  height: var(--sw-vh, 100vh) !important;
+}
+
+/* 2. editor-scroll — iOS momentum scrolling + overscroll containment */
+.editor-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  /* Smooth scroll so scroll-to-caret doesn't feel jarring */
+  scroll-behavior: smooth;
+}
+
+/* 3. script-page — prevent it from creating a new scroll context
+      that competes with the editor-scroll container             */
+.script-page {
+  overscroll-behavior: none;
+}
+
+/* 4. Contenteditable elements — touch-action prevents double-tap
+      zoom (which repositions the caret) while still allowing
+      normal scrolling                                           */
+[contenteditable="true"] {
+  touch-action: manipulation;
+  /* Prevent iOS from showing the text selection magnifier on long-press
+     in a way that interferes with the cursor position            */
+  -webkit-user-select: text;
+  user-select: text;
+  /* Prevent tap highlight flash that can obscure the caret       */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 5. Prevent the script page click-shield from swallowing touch
+      events in a way that misroutes the tap target              */
+[data-testid="screenplay-editor"] {
+  touch-action: manipulation;
+}
+
+/* 6. On very small screens, ensure the toolbar doesn't use fixed
+      positioning that causes reflow-triggered cursor jumps       */
+@media (max-width: 768px) {
+  [data-testid="top-toolbar"] {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Prevent the script page from growing wider than the screen on
+     narrow phones (avoids horizontal scroll that jumps cursor)   */
+  .script-page {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Smooth out character name and element type transitions to
+     prevent the visual "jump" when the element type changes      */
+  .script-element {
+    transition: margin 80ms ease, padding 80ms ease;
+  }
+}
+
+/* 7. iOS safe area insets — prevent content hiding behind home bar */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .editor-scroll {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
